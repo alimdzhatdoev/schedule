@@ -1,0 +1,106 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #ffffff;
+    padding: 10px;
+}
+
+.lessons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.lessons_day {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    box-shadow: -5px -5px 12px #ffffff,
+        5px 5px 12px rgba(0, 0, 0, 0.20),
+        inset -5px -5px 12px #ffffff,
+        inset 5px 5px 12px rgba(0, 0, 0, 0.20);
+}
+
+.lessons_day__title {
+    width: 100%;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.lessons_day__lesson {
+    display: flex;
+}
+
+.lessons_day__lesson___num {
+    width: 10%;
+}
+
+.lessons_day__lesson___data {
+    width: 90%;
+}
+
+.lessons_day__lesson___data____elem{
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.lessons_day__lesson___data____elem:nth-child(1){
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.lessons_day__lesson___data____elem span{
+    font-weight: 600;
+}
+
+.selectDay{
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.selectDay select{
+    width: 100%;
+    height: 40px;
+}
+
+.selectDay button{
+    width: 100%;
+    height: 40px;
+}
+
+/* .testBlock {
+    width: 100px;
+    height: 100px;
+    background-color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10%;
+    box-shadow: -5px -5px 12px #ffffff, 
+                5px 5px 12px rgba(0, 0, 0, 0.20);
+    transition: all 0.2s ease-in-out;
+}
+
+.testBlock:hover{
+    cursor: pointer;
+    box-shadow: -5px -5px 12px #ffffff, 
+                5px 5px 12px rgba(0, 0, 0, 0.20),
+                inset -5px -5px 12px #ffffff, 
+                inset 5px 5px 12px rgba(0, 0, 0, 0.20);
+} */
