@@ -16,9 +16,13 @@
 
 <body>
     <?php
-    $tableName = 'lessons';
     $separation = isset($_POST['week']) ? $_POST['week'] : 'числитель';
     $subgroup = isset($_POST['subgroup']) ? $_POST['subgroup'] : '1';
+    $selectedGroup = isset($_POST['group']) ? $_POST['group'] : '';
+    $selectedDay = isset($_POST['day']) ? $_POST['day'] : 'today';
+
+    $tableName = 'lessons';
+
     $lessons = R::findAll($tableName);
 
     $data = [];
@@ -99,8 +103,7 @@
 
         <div class="lessons">
             <?php
-            $selectedDay = isset($_POST['day']) ? $_POST['day'] : 'today';
-            $selectedGroup = isset($_POST['group']) ? $_POST['group'] : '';
+
 
             foreach ($lessonsByDay as $groupTitle => $groups):
                 if ($selectedGroup != '' && $selectedGroup != $groupTitle) {
@@ -156,7 +159,6 @@
     <div class="tabProfile">
         Профиль пользователя
     </div>
-
 
     <div class="bottomMenu">
         <div class="bottomMenu_elem activeBottomElem roundedTopRight" onclick="changeTab(this, 'tabSchedule')">
