@@ -94,7 +94,7 @@
         <div class="tabProfile">
             <?php
             if ($_SESSION['user']) {
-                print_r('Текущая неделя: ' . $_SESSION['user']['week'] . '<br/>');
+                print_r('Текущая неделя: ' . $_SESSION['week'] . '<br/>');
                 print_r('ФИО: ' . $_SESSION['user']['username'] . '<br/>');
                 print_r('Номер зачетки: ' . $_SESSION['user']['numzachetka'] . '<br/>');
                 print_r('Группа: ' . $_SESSION['user']['groupname'] . '<br/>');
