@@ -93,9 +93,21 @@
             <?php } else if ($_SESSION['user']['type'] == 'преподаватель') { ?>
                     <div class="lessons">
                         <?php
-                        $found_lessons = false;
+                        $found_lessons_show = false;
 
                         foreach ($lessonsByDayTeachers as $weekday => $dayLessons):
+                            $found_lessons_show = false; 
+
+                            foreach ($dayLessons as $lesson) {
+                                if ($lesson['teacher'] == $_SESSION['user']['username']) {
+                                    $found_lessons_show = true;
+                                    break;
+                                }
+                            }
+
+                            if (!$found_lessons_show) {
+                                continue;
+                            }
                             if (
                                 ($selectedDay == 'all')
                                 || ($selectedDay == 'today' && $weekday == $russianDay[date('l')])
@@ -104,6 +116,7 @@
                                 ?>
                                 <div class="lessons_day">
                                     <div class="lessons_day__title">
+
                                     <?php echo ($weekday); ?>
                                     </div>
 
