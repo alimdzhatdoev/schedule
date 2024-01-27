@@ -30,79 +30,92 @@
                 <button type="submit">Показать расписание</button>
             </form>
 
-            <div class="lessons">
-                <?php
-                $found_lessons = false;
+            <?php if ($_SESSION['user']['type'] == 'студент') { ?>
+                <div class="lessons">
+                    <?php
+                    $found_lessons = false;
 
-                foreach ($lessonsByDay as $groupTitle => $groups):
-                    if ($selectedGroup != '' && $selectedGroup != $groupTitle) {
-                        continue;
-                    }
+                    foreach ($lessonsByDay as $groupTitle => $groups):
+                        if ($selectedGroup != '' && $selectedGroup != $groupTitle) {
+                            continue;
+                        }
 
-                    foreach ($groups as $weekday => $dayLessons):
-                        if (
-                            ($selectedDay == 'all')
-                            || ($selectedDay == 'today' && $weekday == $russianDay[date('l')])
-                            || ($selectedDay == 'tomorrow' && $weekday == $russianDay[date('l', strtotime('tomorrow'))])
-                        ):
-                            ?>
-                            <div class="lessons_day">
-                                <div class="lessons_day__title">
-                                    <?php echo ($weekday); ?>
+                        foreach ($groups as $weekday => $dayLessons):
+                            if (
+                                ($selectedDay == 'all')
+                                || ($selectedDay == 'today' && $weekday == $russianDay[date('l')])
+                                || ($selectedDay == 'tomorrow' && $weekday == $russianDay[date('l', strtotime('tomorrow'))])
+                            ):
+                                ?>
+                                <div class="lessons_day">
+                                    <div class="lessons_day__title">
+                                        <?php echo ($weekday); ?>
+                                    </div>
+
+                                    <?php foreach ($dayLessons as $lesson):
+                                        if (
+                                            ($lesson['separation'] == $separation || $lesson['separation'] == '0')
+                                            &&
+                                            ($lesson['subgroup'] == $subgroup || $lesson['subgroup'] == '0')
+                                        ): ?>
+                                            <?php
+                                            $found_lessons = true;
+                                            ?>
+                                            <div class="lessons_day__lesson">
+                                                <div class="lessons_day__lesson___num">
+                                                    <?php echo ($lesson['number'] . '.'); ?>
+                                                </div>
+                                                <div class="lessons_day__lesson___data">
+                                                    <div class="lessons_day__lesson___data____elem">
+                                                        <?php echo ($lesson['title']); ?>
+                                                    </div>
+                                                    <div class="lessons_day__lesson___data____elem">
+                                                        <?php echo ('Преподаватель: ' . '<span>' . $lesson['teacher'] . '</span>'); ?>
+                                                    </div>
+                                                    <div class="lessons_day__lesson___data____elem">
+                                                        <?php echo ('Аудитория: ' . '<span>' . $lesson['auditorium'] . '</span>'); ?>
+                                                    </div>
+                                                    <div class="lessons_day__lesson___data____elem">
+                                                        <?php echo ('Тип занятия: ' . '<span>' . $lesson['type'] . '</span>'); ?>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
                                 </div>
-
-                                <?php foreach ($dayLessons as $lesson):
-                                    if (
-                                        ($lesson['separation'] == $separation || $lesson['separation'] == '0')
-                                        &&
-                                        ($lesson['subgroup'] == $subgroup || $lesson['subgroup'] == '0')
-                                    ): ?>
-                                        <?php
-                                        $found_lessons = true;
-                                        ?>
-                                        <div class="lessons_day__lesson">
-                                            <div class="lessons_day__lesson___num">
-                                                <?php echo ($lesson['number'] . '.'); ?>
-                                            </div>
-                                            <div class="lessons_day__lesson___data">
-                                                <div class="lessons_day__lesson___data____elem">
-                                                    <?php echo ($lesson['title']); ?>
-                                                </div>
-                                                <div class="lessons_day__lesson___data____elem">
-                                                    <?php echo ('Преподаватель: ' . '<span>' . $lesson['teacher'] . '</span>'); ?>
-                                                </div>
-                                                <div class="lessons_day__lesson___data____elem">
-                                                    <?php echo ('Аудитория: ' . '<span>' . $lesson['auditorium'] . '</span>'); ?>
-                                                </div>
-                                                <div class="lessons_day__lesson___data____elem">
-                                                    <?php echo ('Тип занятия: ' . '<span>' . $lesson['type'] . '</span>'); ?>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            </div>
-                        <?php endif; ?>
-                    <?php endforeach; ?>
-                <?php endforeach;
-                if (!$found_lessons) {
-                    echo "<div class='no_lessons_message'>Занятия не найдены</div>";
-                } ?>
-            </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endforeach;
+                    if (!$found_lessons) {
+                        echo "<div class='no_lessons_message'>Занятия не найдены</div>";
+                    } ?>
+                </div>
+            <?php } else if ($_SESSION['user']['type'] == 'преподаватель') { ?>
+                    расписание преподавателя
+            <?php } ?>
         </div>
 
         <div class="tabProfile">
             <?php
             if ($_SESSION['user']) {
-                print_r('Текущая неделя: ' . $_SESSION['week'] . '<br/>');
-                print_r('ФИО: ' . $_SESSION['user']['username'] . '<br/>');
-                print_r('Номер зачетки: ' . $_SESSION['user']['numzachetka'] . '<br/>');
-                print_r('Группа: ' . $_SESSION['user']['groupname'] . '<br/>');
-                print_r('Подгруппа: ' . $_SESSION['user']['subgroup'] . '<br/>');
-                ?>
+                if ($_SESSION['user']['type'] == 'студент') {
+                    print_r('Текущая неделя: ' . $_SESSION['week'] . '<br/>');
+                    print_r('ФИО: ' . $_SESSION['user']['username'] . '<br/>');
+                    print_r('Номер зачетки: ' . $_SESSION['user']['numzachetka'] . '<br/>');
+                    print_r('Группа: ' . $_SESSION['user']['groupname'] . '<br/>');
+                    print_r('Подгруппа: ' . $_SESSION['user']['subgroup'] . '<br/>');
+                    ?>
 
-                <a href="includes/logout.php">Выход</a>
-            <?php } else { ?>
+                    <a href="includes/logout.php">Выход</a>
+                <?php } else if ($_SESSION['user']['type'] == 'преподаватель') { 
+                    print_r('Текущая неделя: ' . $_SESSION['week'] . '<br/>');
+                    print_r('ФИО: ' . $_SESSION['user']['username'] . '<br/>');
+                    print_r('Должность: ' . $_SESSION['user']['position'] . '<br/>');
+                    ?>
+
+                    <a href="includes/logout.php">Выход</a>
+                <?php }
+            } else { ?>
                 <div class="tabProfile_auth">
                     <img src="refs/logo.png" alt="">
                     <h1>Авторизация</h1>
