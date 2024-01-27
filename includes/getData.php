@@ -43,6 +43,7 @@ foreach ($lessons as $lesson) {
 $groupTitles = array_unique(array_column($data, 'grouptitle'));
 
 $lessonsByDay = array();
+$lessonsByDayTeachers = array();
 
 foreach ($data as $lesson) {
     $weekday = $lesson['weekday'];
@@ -53,8 +54,29 @@ foreach ($data as $lesson) {
     if (!isset($lessonsByDay[$grouptitle][$weekday])) {
         $lessonsByDay[$grouptitle][$weekday] = array();
     }
+    
     $lessonsByDay[$grouptitle][$weekday][] = $lesson;
+    
+    usort($lessonsByDay[$grouptitle][$weekday], function($a, $b) {
+        return $a['number'] - $b['number'];
+    });
 }
+
+foreach ($data as $lesson) {
+    $weekday = $lesson['weekday'];
+    if (!isset($lessonsByDayTeachers[$weekday])) {
+        $lessonsByDayTeachers[$weekday] = array();
+    }
+    $lessonsByDayTeachers[$weekday][] = $lesson;
+}
+
+foreach ($lessonsByDayTeachers as &$lessons) {
+    usort($lessons, function($a, $b) {
+        return $a['number'] - $b['number'];
+    });
+}
+
+unset($lessons);
 
 $russianDay = [
     'Monday' => 'Понедельник',

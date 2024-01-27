@@ -34,6 +34,7 @@ if (!empty($login) && !empty($password)) {
         header('Location: /');
         exit;
     } else {
+        header('Location: /');
         $_SESSION['errors'] = 'Неправильный логин или пароль';
     }
 }
