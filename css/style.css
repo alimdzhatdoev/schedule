@@ -170,3 +170,12 @@ body {
 .tabShow{
     display: flex;
 }
+
+.tabSchedule__thisWeek{
+    font-size: 12px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-direction: column;
+}

@@ -17,16 +17,63 @@
 <body>
 
     <?php require 'includes/getData.php'; ?>
+    <?php
+    $thisDay = '<b>' . $russianDay[date('l')] . ' (' . date('d.m.Y') . ')' . '</b>';
+    $thisWeek = $_SESSION['week'];
+    $nextDay = '';
+    ?>
+
+    <?php
+    if ($_POST['day'] == 'tomorrow') {
+        $current_date = date('Y-m-d');
+        $current_day_of_week = date('w', strtotime($current_date));
+        $tomorrow_date = date('Y-m-d', strtotime('+1 day', strtotime($current_date)));
+        $tomorrow_day_of_week = date('w', strtotime($tomorrow_date));
+
+        $nextDay = '<b>' . $russianDay[date('l', strtotime('tomorrow'))] . ' (' . date('d.m.Y', strtotime('tomorrow')) . ')' . '</b>';
+
+        if ($current_day_of_week == 0 && $tomorrow_day_of_week != 0) {
+            if ($_SESSION['week'] == 'числитель') {
+                $_SESSION['week'] = 'знаменатель';
+                $separation = 'знаменатель';
+                $thisWeek = $_SESSION['week'];
+            } else
+                if ($_SESSION['week'] == 'знаменатель') {
+                    $_SESSION['week'] = 'числитель';
+                    $separation = 'числитель';
+                    $thisWeek = $_SESSION['week'];
+                }
+        }
+    }
+    ?>
 
     <?php
     if ($_SESSION['user']) { ?>
         <div class="tabSchedule tabShow">
+            <div class="tabSchedule__thisWeek">
+                <div class="tabSchedule__thisWeek___block">
+                    Сегодня:
+                    <? echo $thisDay; ?>
+                </div>
+                <?php if ($nextDay != '') { ?>
+                    <div class="tabSchedule__thisWeek___block">
+                        Выбранный день:
+                        <? echo $nextDay; ?>
+                    </div>
+                <?php } ?>
+                <div class="tabSchedule__thisWeek___block">
+                    Текущая неделя:
+                    <? echo ('<b>' . $thisWeek . '</b>'); ?>
+                </div>
+            </div>
+
             <form method="post" action="" class="selectDay">
                 <select name="day" id="day">
                     <option value="today" <?php echo ($_POST['day'] == 'today') ? 'selected' : ''; ?>>Сегодня</option>
                     <option value="tomorrow" <?php echo ($_POST['day'] == 'tomorrow') ? 'selected' : ''; ?>>Завтра</option>
                     <option value="all" <?php echo ($_POST['day'] == 'all') ? 'selected' : ''; ?>>Вся неделя</option>
                 </select>
+
                 <button type="submit">Показать расписание</button>
             </form>
 
@@ -45,8 +92,7 @@
                                 ($selectedDay == 'all')
                                 || ($selectedDay == 'today' && $weekday == $russianDay[date('l')])
                                 || ($selectedDay == 'tomorrow' && $weekday == $russianDay[date('l', strtotime('tomorrow'))])
-                            ):
-                                ?>
+                            ): ?>
                                 <div class="lessons_day">
                                     <div class="lessons_day__title">
                                         <?php echo ($weekday); ?>
@@ -96,7 +142,7 @@
                         $found_lessons_show = false;
 
                         foreach ($lessonsByDayTeachers as $weekday => $dayLessons):
-                            $found_lessons_show = false; 
+                            $found_lessons_show = false;
 
                             foreach ($dayLessons as $lesson) {
                                 if ($lesson['teacher'] == $_SESSION['user']['username']) {
@@ -167,7 +213,7 @@
             <?php
             if ($_SESSION['user']) {
                 if ($_SESSION['user']['type'] == 'студент') {
-                    print_r('Текущая неделя: ' . $_SESSION['week'] . '<br/>');
+                    // print_r('Текущая неделя: ' . $_SESSION['week'] . '<br/>');
                     print_r('ФИО: ' . $_SESSION['user']['username'] . '<br/>');
                     print_r('Номер зачетки: ' . $_SESSION['user']['numzachetka'] . '<br/>');
                     print_r('Группа: ' . $_SESSION['user']['groupname'] . '<br/>');
@@ -176,7 +222,7 @@
 
                     <a href="includes/logout.php">Выход</a>
                 <?php } else if ($_SESSION['user']['type'] == 'преподаватель') {
-                    print_r('Текущая неделя: ' . $_SESSION['week'] . '<br/>');
+                    // print_r('Текущая неделя: ' . $_SESSION['week'] . '<br/>');
                     print_r('ФИО: ' . $_SESSION['user']['username'] . '<br/>');
                     print_r('Должность: ' . $_SESSION['user']['position'] . '<br/>');
                     ?>
