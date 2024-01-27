@@ -15,156 +15,144 @@
 </head>
 
 <body>
+
+    <?php require 'includes/getData.php'; ?>
+
     <?php
-    $separation = isset($_POST['week']) ? $_POST['week'] : 'числитель';
-    $subgroup = isset($_POST['subgroup']) ? $_POST['subgroup'] : '1';
-    $selectedGroup = isset($_POST['group']) ? $_POST['group'] : '';
-    $selectedDay = isset($_POST['day']) ? $_POST['day'] : 'today';
+    if ($_SESSION['user']) { ?>
+        <div class="tabSchedule tabShow">
+            <form method="post" action="" class="selectDay">
+                <select name="day" id="day">
+                    <option value="today" <?php echo ($_POST['day'] == 'today') ? 'selected' : ''; ?>>Сегодня</option>
+                    <option value="tomorrow" <?php echo ($_POST['day'] == 'tomorrow') ? 'selected' : ''; ?>>Завтра</option>
+                    <option value="all" <?php echo ($_POST['day'] == 'all') ? 'selected' : ''; ?>>Вся неделя</option>
+                </select>
+                <button type="submit">Показать расписание</button>
+            </form>
 
-    $tableName = 'lessons';
+            <div class="lessons">
+                <?php
+                $found_lessons = false;
 
-    $lessons = R::findAll($tableName);
+                foreach ($lessonsByDay as $groupTitle => $groups):
+                    if ($selectedGroup != '' && $selectedGroup != $groupTitle) {
+                        continue;
+                    }
 
-    $data = [];
-    $count = 1;
+                    foreach ($groups as $weekday => $dayLessons):
+                        if (
+                            ($selectedDay == 'all')
+                            || ($selectedDay == 'today' && $weekday == $russianDay[date('l')])
+                            || ($selectedDay == 'tomorrow' && $weekday == $russianDay[date('l', strtotime('tomorrow'))])
+                        ):
+                            ?>
+                            <div class="lessons_day">
+                                <div class="lessons_day__title">
+                                    <?php echo ($weekday); ?>
+                                </div>
 
-    foreach ($lessons as $lesson) {
-        $data[] = [
-            'institute' => $lesson['institute'],
-            'direction' => $lesson['direction'],
-            'grouptitle' => $lesson['grouptitle'],
-            'weekday' => $lesson['weekday'],
-            'number' => $lesson['number'],
-            'title' => $lesson['title'],
-            'teacher' => $lesson['teacher'],
-            'auditorium' => $lesson['auditorium'],
-            'type' => $lesson['type'],
-            'subgroup' => $lesson['subgroup'],
-            'separation' => $lesson['separation'],
-        ];
-        $count++;
-    }
-
-    $groupTitles = array_unique(array_column($data, 'grouptitle'));
-
-    $lessonsByDay = array();
-
-    foreach ($data as $lesson) {
-        $weekday = $lesson['weekday'];
-        $grouptitle = $lesson['grouptitle'];
-        if (!isset($lessonsByDay[$grouptitle])) {
-            $lessonsByDay[$grouptitle] = array();
-        }
-        if (!isset($lessonsByDay[$grouptitle][$weekday])) {
-            $lessonsByDay[$grouptitle][$weekday] = array();
-        }
-        $lessonsByDay[$grouptitle][$weekday][] = $lesson;
-    }
-
-    $russianDay = [
-        'Monday' => 'Понедельник',
-        'Tuesday' => 'Вторник',
-        'Wednesday' => 'Среда',
-        'Thursday' => 'Четверг',
-        'Friday' => 'Пятница',
-        'Saturday' => 'Суббота',
-        'Sunday' => 'Воскресенье',
-    ];
-    ?>
-
-    <div class="tabSchedule tabShow">
-        <form method="post" action="" class="selectDay">
-            <select name="group" id="group">
-                <option value="" disabled selected>Выберите группу</option>
-                <?php foreach ($groupTitles as $title): ?>
-                    <option value="<?php echo $title; ?>" <?php echo ($_POST['group'] == $title) ? 'selected' : ''; ?>>
-                        <?php echo $title; ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <select name="week" id="week">
-                <option value="числитель" <?php echo ($_POST['week'] == 'числитель') ? 'selected' : ''; ?>>Числитель
-                </option>
-                <option value="знаменатель" <?php echo ($_POST['week'] == 'знаменатель') ? 'selected' : ''; ?>>Знаменатель
-                </option>
-            </select>
-            <select name="subgroup" id="subgroup">
-                <option value="1" <?php echo ($_POST['subgroup'] == '1') ? 'selected' : ''; ?>>Первая подгруппа</option>
-                <option value="2" <?php echo ($_POST['subgroup'] == '2') ? 'selected' : ''; ?>>Вторая подгруппа</option>
-            </select>
-
-            <select name="day" id="day">
-                <option value="today" <?php echo ($_POST['day'] == 'today') ? 'selected' : ''; ?>>Сегодня</option>
-                <option value="tomorrow" <?php echo ($_POST['day'] == 'tomorrow') ? 'selected' : ''; ?>>Завтра</option>
-                <option value="all" <?php echo ($_POST['day'] == 'all') ? 'selected' : ''; ?>>Вся неделя</option>
-            </select>
-            <button type="submit">Показать расписание</button>
-        </form>
-
-        <div class="lessons">
-            <?php
-
-
-            foreach ($lessonsByDay as $groupTitle => $groups):
-                if ($selectedGroup != '' && $selectedGroup != $groupTitle) {
-                    continue; // Skip if the group is not the selected group
-                }
-
-                foreach ($groups as $weekday => $dayLessons):
-                    if (
-                        ($selectedDay == 'all')
-                        || ($selectedDay == 'today' && $weekday == $russianDay[date('l')])
-                        || ($selectedDay == 'tomorrow' && $weekday == $russianDay[date('l', strtotime('tomorrow'))])
-                    ):
-                        ?>
-                        <div class="lessons_day">
-                            <div class="lessons_day__title">
-                                <?php echo ($weekday); ?>
+                                <?php foreach ($dayLessons as $lesson):
+                                    if (
+                                        ($lesson['separation'] == $separation || $lesson['separation'] == '0')
+                                        &&
+                                        ($lesson['subgroup'] == $subgroup || $lesson['subgroup'] == '0')
+                                    ): ?>
+                                        <?php
+                                        $found_lessons = true;
+                                        ?>
+                                        <div class="lessons_day__lesson">
+                                            <div class="lessons_day__lesson___num">
+                                                <?php echo ($lesson['number'] . '.'); ?>
+                                            </div>
+                                            <div class="lessons_day__lesson___data">
+                                                <div class="lessons_day__lesson___data____elem">
+                                                    <?php echo ($lesson['title']); ?>
+                                                </div>
+                                                <div class="lessons_day__lesson___data____elem">
+                                                    <?php echo ('Преподаватель: ' . '<span>' . $lesson['teacher'] . '</span>'); ?>
+                                                </div>
+                                                <div class="lessons_day__lesson___data____elem">
+                                                    <?php echo ('Аудитория: ' . '<span>' . $lesson['auditorium'] . '</span>'); ?>
+                                                </div>
+                                                <div class="lessons_day__lesson___data____elem">
+                                                    <?php echo ('Тип занятия: ' . '<span>' . $lesson['type'] . '</span>'); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
                             </div>
-
-                            <?php foreach ($dayLessons as $lesson):
-                                if (
-                                    ($lesson['separation'] == $separation || $lesson['separation'] == '0')
-                                    &&
-                                    ($lesson['subgroup'] == $subgroup || $lesson['subgroup'] == '0')
-                                ): ?>
-                                    <div class="lessons_day__lesson">
-                                        <div class="lessons_day__lesson___num">
-                                            <?php echo ($lesson['number'] . '.'); ?>
-                                        </div>
-                                        <div class="lessons_day__lesson___data">
-                                            <div class="lessons_day__lesson___data____elem">
-                                                <?php echo ($lesson['title']); ?>
-                                            </div>
-                                            <div class="lessons_day__lesson___data____elem">
-                                                <?php echo ('Преподаватель: ' . '<span>' . $lesson['teacher'] . '</span>'); ?>
-                                            </div>
-                                            <div class="lessons_day__lesson___data____elem">
-                                                <?php echo ('Аудитория: ' . '<span>' . $lesson['auditorium'] . '</span>'); ?>
-                                            </div>
-                                            <div class="lessons_day__lesson___data____elem">
-                                                <?php echo ('Тип занятия: ' . '<span>' . $lesson['type'] . '</span>'); ?>
-                                            </div>
-                                        </div>
-                                    </div>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            <?php endforeach; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endforeach;
+                if (!$found_lessons) {
+                    echo "<div class='no_lessons_message'>Занятия не найдены</div>";
+                } ?>
+            </div>
         </div>
-    </div>
 
-    <div class="tabProfile">
-        Профиль пользователя
-    </div>
+        <div class="tabProfile">
+            <?php
+            if ($_SESSION['user']) {
+                print_r('Текущая неделя: ' . $_SESSION['user']['week'] . '<br/>');
+                print_r('ФИО: ' . $_SESSION['user']['username'] . '<br/>');
+                print_r('Номер зачетки: ' . $_SESSION['user']['numzachetka'] . '<br/>');
+                print_r('Группа: ' . $_SESSION['user']['groupname'] . '<br/>');
+                print_r('Подгруппа: ' . $_SESSION['user']['subgroup'] . '<br/>');
+                ?>
 
-    <div class="bottomMenu">
-        <div class="bottomMenu_elem activeBottomElem roundedTopRight" onclick="changeTab(this, 'tabSchedule')">
-            Расписание</div>
-        <div class="bottomMenu_elem" onclick="changeTab(this, 'tabProfile')">Профиль</div>
-    </div>
+                <a href="includes/logout.php">Выход</a>
+            <?php } else { ?>
+                <div class="tabProfile_auth">
+                    <img src="refs/logo.png" alt="">
+                    <h1>Авторизация</h1>
+                    <form action="includes/auth.php" method="post">
+                        <label for="">Логин</label>
+                        <input type="text" name="login" placeholder="Введите логин">
+                        <label for="">Пароль</label>
+                        <input type="password" name="password" placeholder="Введите пароль">
+                        <button type="submit">Вход</button>
+                    </form>
+                </div>
+            <?php } ?>
+
+        </div>
+
+        <div class="bottomMenu">
+            <div class="bottomMenu_elem activeBottomElem roundedTopRight" onclick="changeTab(this, 'tabSchedule')">
+                Расписание</div>
+            <div class="bottomMenu_elem" onclick="changeTab(this, 'tabProfile')">Профиль</div>
+        </div>
+    <?php } else { ?>
+        <div class="tabProfile tabShow">
+            <?php
+            if ($_SESSION['user']) {
+                print_r('Текущая неделя: ' . $_SESSION['user']['week'] . '<br/>');
+                print_r('ФИО: ' . $_SESSION['user']['username'] . '<br/>');
+                print_r('Номер зачетки: ' . $_SESSION['user']['numzachetka'] . '<br/>');
+                print_r('Группа: ' . $_SESSION['user']['groupname'] . '<br/>');
+                print_r('Подгруппа: ' . $_SESSION['user']['subgroup'] . '<br/>');
+                ?>
+
+                <a href="includes/logout.php">Выход</a>
+            <?php } else { ?>
+                <div class="tabProfile_auth">
+                    <img src="refs/logo.png" alt="">
+                    <h1>Авторизация</h1>
+                    <form action="includes/auth.php" method="post">
+                        <label for="">Логин</label>
+                        <input type="text" name="login" placeholder="Введите логин">
+                        <label for="">Пароль</label>
+                        <input type="password" name="password" placeholder="Введите пароль">
+                        <button type="submit">Вход</button>
+                    </form>
+                </div>
+            <?php } ?>
+
+        </div>
+    <?php } ?>
+
+
 </body>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
