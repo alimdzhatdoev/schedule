@@ -10,6 +10,13 @@ body {
     background-color: #ececec;
     padding: 10px;
     padding-bottom: 60px;
+    display: flex;
+    justify-content: center;
+}
+
+main{
+    width: 900px;
+    position: relative;
 }
 
 .lessons {
@@ -127,7 +134,7 @@ body {
 }
 
 
-.tabProfile_auth{
+.tabProfile_auth {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -137,13 +144,13 @@ body {
     gap: 30px;
 }
 
-.tabProfile form{
+.tabProfile form {
     display: flex;
     flex-direction: column;
     width: 80%;
 }
 
-.tabProfile form input{
+.tabProfile form input {
     width: 100%;
     height: 40px;
     padding: 0 10px;
@@ -152,7 +159,7 @@ body {
     margin-top: 10px;
 }
 
-.tabProfile form button{
+.tabProfile form button {
     width: 100%;
     height: 40px;
     background-color: #68100d;
@@ -161,21 +168,78 @@ body {
     font-size: 14px;
 }
 
-.tabSchedule, 
-.tabProfile{
+.tabSchedule,
+.tabProfile {
     display: none;
     flex-direction: column;
 }
 
-.tabShow{
+.tabShow {
     display: flex;
 }
 
-.tabSchedule__thisWeek{
+.tabSchedule__thisWeek {
     font-size: 12px;
     width: 100%;
     display: flex;
     align-items: center;
     margin-bottom: 10px;
     flex-direction: column;
+}
+
+.tabProfile_userData {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+}
+
+.tabProfile_userData__photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow:
+        -5px -5px 12px #ffffff,
+        5px 5px 12px rgba(0, 0, 0, 0.20),
+        inset -5px -5px 12px #ffffff,
+        inset 5px 5px 12px rgba(0, 0, 0, 0.20);
+    /* border: 1px solid rgba(0, 0, 0, 0.20); */
+    margin-bottom: 30px;
+    margin-top: 20px;
+}
+
+.tabProfile_userData__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.tabProfile_userData__text {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid rgba(0, 0, 0, 0.20);
+    gap: 20px;
+    padding: 15px 0;
+}
+
+.tabProfile_userData__text:last-child {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.20);
+}
+
+.tabProfile_userData__text___title {
+    width: 150px;
+    font-weight: 600;
+}
+
+.tabProfile_exit {
+    position: absolute;
+    top: 10px;
+    right: 5px;
+    width: 20px;
+}
+
+.tabProfile_exit img {
+    width: 100%;
 }
