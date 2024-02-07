@@ -102,9 +102,9 @@
 
                                         <?php foreach ($dayLessons as $lesson):
                                             if (
-                                                ($lesson['separation'] == $separation || $lesson['separation'] == '0')
+                                                ($lesson['separation'] == $separation || $lesson['separation'] == '-')
                                                 &&
-                                                ($lesson['subgroup'] == $subgroup || $lesson['subgroup'] == '0')
+                                                ($lesson['subgroup'] == $subgroup || $lesson['subgroup'] == '-')
                                             ): ?>
                                                 <?php
                                                 $found_lessons = true;
